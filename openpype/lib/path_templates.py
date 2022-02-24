@@ -126,6 +126,19 @@ class StringTemplate(object):
 
         self._parts = self.find_optional_parts(new_parts)
 
+    def __str__(self):
+        return self.template
+
+    def __repr__(self):
+        return "<{}> {}".format(self.__class__.__name__, self.template)
+
+    def __contains__(self, other):
+        return other in self.template
+
+    def replace(self, *args, **kwargs):
+        self._template = self.template.replace(*args, **kwargs)
+        return self
+
     @property
     def template(self):
         return self._template
@@ -214,15 +227,18 @@ class TemplatesDict(object):
     def __init__(self, templates=None):
         self._raw_templates = None
         self._templates = None
+        self._objected_templates = None
         self.set_templates(templates)
 
     def set_templates(self, templates):
         if templates is None:
             self._raw_templates = None
             self._templates = None
+            self._objected_templates = None
         elif isinstance(templates, dict):
             self._raw_templates = copy.deepcopy(templates)
-            self._templates = self.create_ojected_templates(templates)
+            self._templates = templates
+            self._objected_templates = self.create_ojected_templates(templates)
         else:
             raise TypeError("<{}> argument must be a dict, not {}.".format(
                 self.__class__.__name__, str(type(templates))
@@ -241,6 +257,10 @@ class TemplatesDict(object):
     @property
     def templates(self):
         return self._templates
+
+    @property
+    def objected_templates(self):
+        return self._objected_templates
 
     @classmethod
     def create_ojected_templates(cls, templates):
@@ -312,7 +332,7 @@ class TemplatesDict(object):
                 if env_key not in data:
                     data[env_key] = val
 
-        solved = self._solve_dict(self.templates, data)
+        solved = self._solve_dict(self.objected_templates, data)
 
         output = TemplatesResultDict(solved)
         output.strict = strict
