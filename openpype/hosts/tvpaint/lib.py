@@ -584,6 +584,8 @@ def composite_rendered_layers(
         src_filepaths = []
         for layer_position in sorted_positions:
             layer_id = layer_ids_by_position[layer_position]
+            if layer_id not in filepaths_by_layer_id:
+                continue
             filepaths_by_frame = filepaths_by_layer_id[layer_id]
             src_filepath = filepaths_by_frame.get(frame_idx)
             if src_filepath is not None:
