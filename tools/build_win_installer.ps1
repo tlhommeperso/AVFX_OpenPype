@@ -107,7 +107,7 @@ iscc
 
 Write-Host ">>> " -NoNewline -ForegroundColor green
 Write-Host "Detecting host Python ... " -NoNewline
-$python = "python"
+$python = "python3.7"
 if (Get-Command "pyenv" -ErrorAction SilentlyContinue) {
     $pyenv_python = & pyenv which python
     if (Test-Path -PathType Leaf -Path "$($pyenv_python)") {
